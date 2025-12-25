@@ -1,0 +1,20 @@
+{
+  "name": "terminalllll",
+  "version": "1.0.0",
+  "description": "A fully functioning shell with a simplistic, cute, and clean interface",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=8080 --open=/",
+    "dev": "live-server --port=8080 --open=/"
+  },
+  "keywords": [
+    "terminal",
+    "shell",
+    "web-terminal"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

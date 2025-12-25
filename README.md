@@ -45,7 +45,23 @@ Simply open `index.html` in a web browser to start using the terminal.
 
 ## Running Locally
 
-You can serve the terminal using any web server. For example:
+### Option 1: Using Live Server (Recommended)
+
+The project includes live-server for automatic browser refresh during development:
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
+```
+
+The terminal will automatically open in your browser at http://localhost:8080 with live reload.
+
+### Option 2: Using Other Web Servers
+
+You can also serve the terminal using any web server:
 
 ```bash
 # Using Python 3
