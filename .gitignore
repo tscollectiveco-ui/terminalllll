@@ -1,0 +1,101 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Editor and IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+*.code-workspace
+
+# Environment Files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.pem
+
+# API Keys and Secrets (CRITICAL)
+# Never commit API keys, tokens, or credentials
+**/secrets/
+**/credentials/
+*.key
+*.secret
+.secrets
+config/secrets.js
+config/credentials.js
+**/*api*key*.txt
+**/*secret*.txt
+**/*token*.txt
+**/*password*.txt
+
+# Node.js (if added in future)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Build Output
+dist/
+build/
+out/
+*.min.js
+*.min.css
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+*.cache
+.cache/
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.nyc_output/
+*.test.js.snap
+
+# Backup Files
+*.bak
+*.backup
+*~
+
+# Compiled Files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Miscellaneous
+.sass-cache/
+.eslintcache
+.parcel-cache/
