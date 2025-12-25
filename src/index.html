@@ -171,17 +171,14 @@ Available commands:
                     output = new Date().toString();
                     break;
                 case 'whoami':
-                    output = process.env.USER || process.env.USERNAME || 'user';
+                    output = 'user';
                     break;
                 case 'pwd':
-                    output = process.cwd();
+                    output = '/';
                     break;
                 case 'exit':
-                    if (typeof require !== 'undefined') {
-                        const { remote } = require('electron');
-                        remote.app.quit();
-                    }
-                    return;
+                    output = 'To close the application, use the window controls or Alt+F4 / Cmd+Q';
+                    break;
                 default:
                     output = `Command not found: ${cmd}. Type 'help' for available commands.`;
                     break;

@@ -50,8 +50,14 @@ app.post('/terminals/:pid/data', express.text(), (req, res) => {
 app.get('/terminals/:pid/data', (req, res) => {
   const term = terminals[req.params.pid];
   if (term) {
-    term.on('data', (data) => {
+    const dataHandler = (data) => {
       res.write(data);
+    };
+    term.on('data', dataHandler);
+    
+    // Clean up listener when response closes
+    res.on('close', () => {
+      term.off('data', dataHandler);
     });
   } else {
     res.sendStatus(404);
