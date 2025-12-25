@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminalllll - A Fully Functioning Shell</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            overflow: hidden;
+        }
+
+        #terminal-container {
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            background-color: #1e1e1e;
+        }
+
+        #terminal {
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.5;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+
+        .prompt {
+            color: #00ff00;
+        }
+
+        .command {
+            color: #ffffff;
+        }
+
+        .output {
+            color: #d4d4d4;
+        }
+
+        .error {
+            color: #ff0000;
+        }
+
+        #input-line {
+            display: flex;
+            align-items: center;
+        }
+
+        #command-input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+            padding-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal-container">
+        <div id="terminal">
+            <div class="output">Welcome to Terminalllll - A Fully Functioning Shell</div>
+            <div class="output">Type 'help' for available commands</div>
+            <div class="output">---</div>
+            <div id="input-line">
+                <span class="prompt">$ </span>
+                <input type="text" id="command-input" autofocus />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const commandInput = document.getElementById('command-input');
+        const inputLine = document.getElementById('input-line');
+
+        // Command history
+        let commandHistory = [];
+        let historyIndex = -1;
+
+        // Focus on input when clicking anywhere in the terminal
+        terminal.addEventListener('click', () => {
+            commandInput.focus();
+        });
+
+        // Handle command input
+        commandInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = commandInput.value.trim();
+                
+                if (command) {
+                    // Add command to history
+                    commandHistory.push(command);
+                    historyIndex = commandHistory.length;
+
+                    // Display the command
+                    const commandLine = document.createElement('div');
+                    commandLine.innerHTML = `<span class="prompt">$ </span><span class="command">${escapeHtml(command)}</span>`;
+                    terminal.insertBefore(commandLine, inputLine);
+
+                    // Execute the command
+                    executeCommand(command);
+
+                    // Clear input
+                    commandInput.value = '';
+                }
+                
+                // Scroll to bottom
+                terminal.scrollTop = terminal.scrollHeight;
+            } else if (e.key === 'ArrowUp') {
+                // Navigate command history up
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    commandInput.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                // Navigate command history down
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    commandInput.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    commandInput.value = '';
+                }
+            }
+        });
+
+        // Execute commands
+        function executeCommand(command) {
+            const args = command.split(' ');
+            const cmd = args[0].toLowerCase();
+
+            let output = '';
+
+            switch (cmd) {
+                case 'help':
+                    output = `
+Available commands:
+  help     - Show this help message
+  clear    - Clear the terminal
+  echo     - Echo text to the terminal
+  date     - Show current date and time
+  whoami   - Show current user
+  pwd      - Show current working directory
+  exit     - Close the application
+                    `.trim();
+                    break;
+                case 'clear':
+                    clearTerminal();
+                    return;
+                case 'echo':
+                    output = args.slice(1).join(' ');
+                    break;
+                case 'date':
+                    output = new Date().toString();
+                    break;
+                case 'whoami':
+                    output = 'user';
+                    break;
+                case 'pwd':
+                    output = '/';
+                    break;
+                case 'exit':
+                    output = 'To close the application, use the window controls or Alt+F4 / Cmd+Q';
+                    break;
+                default:
+                    output = `Command not found: ${cmd}. Type 'help' for available commands.`;
+                    break;
+            }
+
+            // Display output
+            if (output) {
+                const outputDiv = document.createElement('div');
+                outputDiv.className = 'output';
+                outputDiv.textContent = output;
+                terminal.insertBefore(outputDiv, inputLine);
+            }
+        }
+
+        // Clear terminal
+        function clearTerminal() {
+            const children = Array.from(terminal.children);
+            children.forEach(child => {
+                if (child !== inputLine) {
+                    terminal.removeChild(child);
+                }
+            });
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Auto-focus on load
+        window.addEventListener('load', () => {
+            commandInput.focus();
+        });
+    </script>
+</body>
+</html>

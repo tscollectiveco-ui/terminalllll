@@ -1,0 +1,21 @@
+appId: com.terminalllll.app
+productName: Terminalllll
+directories:
+  output: dist
+files:
+  - src/**/*
+  - package.json
+mac:
+  target:
+    - dmg
+    - zip
+  category: public.app-category.developer-tools
+win:
+  target:
+    - nsis
+    - portable
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
