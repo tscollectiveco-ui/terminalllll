@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>terminalllll - A Fully Functioning Shell</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="terminal-header">
+            <div class="header-controls">
+                <span class="control-dot red"></span>
+                <span class="control-dot yellow"></span>
+                <span class="control-dot green"></span>
+            </div>
+            <div class="header-title">terminalllll</div>
+            <div class="header-spacer"></div>
+        </header>
+        
+        <div class="terminal-body">
+            <div id="output" class="terminal-output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">$</span>
+                <input type="text" id="terminal-input" class="terminal-input" autofocus autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+    </div>
+    
+    <script src="terminal.js"></script>
+</body>
+</html>
