@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const signupForm = document.getElementById('signupForm');
     
     if (signupForm) {
-        signupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        signupForm.addEventListener('submit', function(event) {
+            event.preventDefault();
             
             // Get form values
             const fullName = document.getElementById('fullName').value;
@@ -79,7 +79,7 @@ function showError(fieldId, message) {
 
 function clearErrors() {
     const errorMessages = document.querySelectorAll('.error-message');
-    errorMessages.forEach(msg => msg.remove());
+    errorMessages.forEach(errorMessage => errorMessage.remove());
     
     const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
