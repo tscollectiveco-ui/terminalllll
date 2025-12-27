@@ -1,7 +1,7 @@
 {
   "name": "terminalllll",
   "version": "1.0.0",
-  "description": "a fully functioning shell",
+  "description": "A modern, fully functional terminal shell application built with Electron",
   "main": "src/electron.js",
   "scripts": {
     "start": "electron .",
@@ -10,10 +10,23 @@
   "keywords": [
     "terminal",
     "shell",
-    "electron"
+    "electron",
+    "command-line",
+    "cli",
+    "terminal-emulator",
+    "cross-platform",
+    "desktop-app"
   ],
-  "author": "",
+  "author": "tscollectiveco-ui",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tscollectiveco-ui/terminalllll.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tscollectiveco-ui/terminalllll/issues"
+  },
+  "homepage": "https://github.com/tscollectiveco-ui/terminalllll#readme",
   "devDependencies": {
     "electron": "^28.0.0",
     "electron-builder": "^24.9.0"
