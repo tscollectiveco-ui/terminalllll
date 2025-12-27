@@ -225,20 +225,23 @@ class Terminal {
         }
 
         const supportedThemes = ['dark', 'light'];
+        // Escape theme names for defense-in-depth (even though hardcoded)
+        const escapedThemes = supportedThemes.map(t => this.escapeHtml(t));
 
         // No theme provided: show current theme and available options
         if (!themeName) {
-            return `<div class="info-line">Current theme: dark (default). Supported themes: ${supportedThemes.join(', ')}</div>`;
+            return `<div class="info-line">Current theme: dark (default). Supported themes: ${escapedThemes.join(', ')}</div>`;
         }
 
         // Invalid theme provided: give meaningful feedback
         if (!supportedThemes.includes(themeName)) {
             const sanitizedTheme = this.escapeHtml(themeName);
-            return `<div class="error-line">Unsupported theme "${sanitizedTheme}". Supported themes: ${supportedThemes.join(', ')}</div>`;
+            return `<div class="error-line">Unsupported theme "${sanitizedTheme}". Supported themes: ${escapedThemes.join(', ')}</div>`;
         }
 
-        // Valid theme provided: keep existing stub behavior but acknowledge the selection
-        return `<div class="info-line">Theme switching coming soon! (selected theme: ${themeName})</div>`;
+        // Valid theme provided: escape for defense-in-depth even though validated
+        const sanitizedTheme = this.escapeHtml(themeName);
+        return `<div class="info-line">Theme switching coming soon! (selected theme: ${sanitizedTheme})</div>`;
     }
     
     autocomplete() {
