@@ -101,12 +101,13 @@ class Terminal {
         if (this.commands[cmd]) {
             const result = this.commands[cmd](args);
             if (result !== undefined && result !== null) {
-                this.addOutput(result);
+                // Command outputs return HTML strings, mark as trusted
+                this.addOutput(result, 'output-line', true);
             }
         } else {
             const sanitizedCmd = this.escapeHtml(cmd);
-            this.addOutput(`<div class="error-line">Command not found: ${sanitizedCmd}</div>`);
-            this.addOutput(`<div class="info-line">Type 'help' for available commands</div>`);
+            this.addOutput(`<div class="error-line">Command not found: ${sanitizedCmd}</div>`, 'output-line', true);
+            this.addOutput(`<div class="info-line">Type 'help' for available commands</div>`, 'output-line', true);
         }
         
         this.scrollToBottom();
@@ -118,12 +119,11 @@ class Terminal {
         return div.innerHTML;
     }
     
-    addOutput(text, className = 'output-line') {
+    addOutput(text, className = 'output-line', isHTML = false) {
         const line = document.createElement('div');
         line.className = className;
-        // Use textContent for security, but allow HTML for formatted output from commands
-        // Only use innerHTML for trusted command output, not user input
-        if (text.startsWith('<div')) {
+        // Only use innerHTML for explicitly trusted command output
+        if (isHTML) {
             line.innerHTML = text;
         } else {
             line.textContent = text;
@@ -189,14 +189,18 @@ class Terminal {
         
         const file = this.fileSystem[this.currentPath][filename];
         if (file === undefined) {
-            return `<div class="error-line">File not found: ${filename}</div>`;
+            const sanitizedFilename = this.escapeHtml(filename);
+            return `<div class="error-line">File not found: ${sanitizedFilename}</div>`;
         }
         
         if (typeof file === 'object') {
-            return `<div class="error-line">${filename} is a directory</div>`;
+            const sanitizedFilename = this.escapeHtml(filename);
+            return `<div class="error-line">${sanitizedFilename} is a directory</div>`;
         }
         
-        return `<div class="success-line">${file}</div>`;
+        // File content is trusted (from our fileSystem), but escape it for safety
+        const sanitizedContent = this.escapeHtml(file);
+        return `<div class="success-line">${sanitizedContent}</div>`;
     }
     
     showAbout() {
@@ -246,9 +250,12 @@ class Terminal {
             this.input.value = matches[0];
         } else if (matches.length > 1) {
             // Multiple matches: show them inline without cluttering output
-            const matchText = matches.join('  ');
-            this.addOutput(`$ ${input}`, 'command-line');
-            this.addOutput(`<div class="info-line">${matchText}</div>`);
+            // Escape command names (though they're from our commands object, defense in depth)
+            const escapedMatches = matches.map(m => this.escapeHtml(m));
+            const matchText = escapedMatches.join('  ');
+            const sanitizedInput = this.escapeHtml(input);
+            this.addOutput(`$ ${sanitizedInput}`, 'command-line');
+            this.addOutput(`<div class="info-line">${matchText}</div>`, 'output-line', true);
             this.scrollToBottom();
         }
         // No matches: do nothing

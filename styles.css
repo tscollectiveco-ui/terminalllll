@@ -134,7 +134,6 @@ body {
     margin-bottom: 8px;
     line-height: 1.5;
     animation: slideIn 0.3s ease-out;
-    opacity: 1;
 }
 
 @keyframes slideIn {
