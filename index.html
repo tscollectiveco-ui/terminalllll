@@ -10,19 +10,19 @@
     <div class="container">
         <header class="terminal-header">
             <div class="header-controls">
-                <span class="control-dot red"></span>
-                <span class="control-dot yellow"></span>
-                <span class="control-dot green"></span>
+                <span class="control-dot red" aria-hidden="true"></span>
+                <span class="control-dot yellow" aria-hidden="true"></span>
+                <span class="control-dot green" aria-hidden="true"></span>
             </div>
             <div class="header-title">terminalllll</div>
             <div class="header-spacer"></div>
         </header>
         
-        <div class="terminal-body">
-            <div id="output" class="terminal-output"></div>
+        <div class="terminal-body" role="region" aria-label="Terminal window">
+            <div id="output" class="terminal-output" role="log" aria-label="Terminal output" aria-live="polite"></div>
             <div class="terminal-input-line">
-                <span class="prompt">$</span>
-                <input type="text" id="terminal-input" class="terminal-input" autofocus autocomplete="off" spellcheck="false">
+                <span class="prompt" aria-hidden="true">$</span>
+                <input type="text" id="terminal-input" class="terminal-input" aria-label="Terminal command input" autofocus autocomplete="off" spellcheck="false">
             </div>
         </div>
     </div>

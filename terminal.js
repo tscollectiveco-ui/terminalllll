@@ -90,7 +90,9 @@ class Terminal {
     }
     
     executeCommand(input) {
-        this.addOutput(`$ ${input}`, 'command-line');
+        // Sanitize input to prevent XSS
+        const sanitizedInput = this.escapeHtml(input);
+        this.addOutput(`$ ${sanitizedInput}`, 'command-line');
         
         const parts = input.split(' ');
         const cmd = parts[0].toLowerCase();
@@ -102,17 +104,30 @@ class Terminal {
                 this.addOutput(result);
             }
         } else {
-            this.addOutput(`Command not found: ${cmd}`, 'error-line');
-            this.addOutput(`Type 'help' for available commands`, 'info-line');
+            const sanitizedCmd = this.escapeHtml(cmd);
+            this.addOutput(`<div class="error-line">Command not found: ${sanitizedCmd}</div>`);
+            this.addOutput(`<div class="info-line">Type 'help' for available commands</div>`);
         }
         
         this.scrollToBottom();
     }
     
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
     addOutput(text, className = 'output-line') {
         const line = document.createElement('div');
         line.className = className;
-        line.innerHTML = text;
+        // Use textContent for security, but allow HTML for formatted output from commands
+        // Only use innerHTML for trusted command output, not user input
+        if (text.startsWith('<div')) {
+            line.innerHTML = text;
+        } else {
+            line.textContent = text;
+        }
         this.output.appendChild(line);
     }
     
@@ -143,7 +158,8 @@ class Terminal {
     }
     
     echo(text) {
-        return text || '';
+        // Escape HTML to prevent XSS
+        return this.escapeHtml(text || '');
     }
     
     showDate() {
@@ -168,7 +184,7 @@ class Terminal {
     
     readFile(filename) {
         if (!filename) {
-            return '<div class="error-line">Usage: cat &lt;filename&gt;</div>';
+            return '<div class="error-line">Usage: cat <filename></div>';
         }
         
         const file = this.fileSystem[this.currentPath][filename];
@@ -197,11 +213,28 @@ class Terminal {
         `.trim();
     }
     
-    changeTheme(theme) {
-        if (!theme) {
-            return '<div class="info-line">Current theme: dark (default)</div>';
+    changeTheme(args) {
+        // Normalize the theme name from the provided arguments
+        let themeName = null;
+        if (typeof args === 'string') {
+            themeName = args.trim();
         }
-        return '<div class="info-line">Theme switching coming soon!</div>';
+
+        const supportedThemes = ['dark', 'light'];
+
+        // No theme provided: show current theme and available options
+        if (!themeName) {
+            return `<div class="info-line">Current theme: dark (default). Supported themes: ${supportedThemes.join(', ')}</div>`;
+        }
+
+        // Invalid theme provided: give meaningful feedback
+        if (!supportedThemes.includes(themeName)) {
+            const sanitizedTheme = this.escapeHtml(themeName);
+            return `<div class="error-line">Unsupported theme "${sanitizedTheme}". Supported themes: ${supportedThemes.join(', ')}</div>`;
+        }
+
+        // Valid theme provided: keep existing stub behavior but acknowledge the selection
+        return `<div class="info-line">Theme switching coming soon! (selected theme: ${themeName})</div>`;
     }
     
     autocomplete() {
@@ -209,14 +242,16 @@ class Terminal {
         const matches = Object.keys(this.commands).filter(cmd => cmd.startsWith(input));
         
         if (matches.length === 1) {
+            // Single match: autocomplete it
             this.input.value = matches[0];
         } else if (matches.length > 1) {
+            // Multiple matches: show them inline without cluttering output
+            const matchText = matches.join('  ');
             this.addOutput(`$ ${input}`, 'command-line');
-            matches.forEach(match => {
-                this.addOutput(match, 'info-line');
-            });
+            this.addOutput(`<div class="info-line">${matchText}</div>`);
             this.scrollToBottom();
         }
+        // No matches: do nothing
     }
 }
 
