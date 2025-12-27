@@ -1,7 +1,7 @@
 {
   "name": "terminalllll",
   "version": "1.0.0",
-  "description": "A modern, fully-functional terminal shell application built with Electron",
+  "description": "A modern, fully functional terminal shell application built with Electron",
   "main": "src/electron.js",
   "scripts": {
     "start": "electron .",

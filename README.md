@@ -1,6 +1,6 @@
 # Terminalllll
 
-A modern, fully-functional terminal shell application built with Electron, featuring a sleek web interface and powerful terminal emulation capabilities.
+A modern, fully functional terminal shell application built with Electron, featuring a sleek web interface and powerful terminal emulation capabilities.
 
 ## Overview
 
