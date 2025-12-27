@@ -84,11 +84,12 @@ Terminalllll is a fully functioning shell built with Electron, providing a termi
 
 ### 8. Security Documentation
 - ✅ Comprehensive SECURITY.md file with:
-  - Threat model for voice authentication module (abbieysaysso)
-  - Compliance requirements
+  - Threat model documentation (includes reference to voice authentication module)
+  - Compliance requirements framework
   - Vulnerability reporting procedures
   - Security controls documentation
   - Incident response procedures
+  - Note: Some security documentation appears to be template/reference material for future features
 
 ### 9. Project Documentation
 - ✅ README.md with project description
@@ -127,9 +128,15 @@ terminalllll/
 The project is a fully functional terminal emulator with:
 - Working desktop application
 - Complete marketing website
-- User registration system with validation
+- User registration UI with client-side validation (frontend only, no backend persistence)
 - Professional styling and UX
-- Security documentation
+- Security documentation framework
 - Ready for distribution via electron-builder
 
-All core features have been implemented and are operational.
+## ⚠️ Note on Features
+- The terminal emulator in `src/index.html` provides a simulated terminal experience with basic commands
+- The backend server (`src/server.js`) provides infrastructure for real terminal sessions via node-pty but requires integration with the frontend
+- The signup form validates user input but does not persist data - backend user management would need to be implemented
+- Security documentation includes references to voice authentication which may be planned for future implementation
+
+All documented core features have been implemented and are operational within their current scope.
