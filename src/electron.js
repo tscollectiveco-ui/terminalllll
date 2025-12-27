@@ -45,15 +45,40 @@ app.on('activate', () => {
 
 // IPC handlers for controlled terminal operations
 ipcMain.handle('terminal:create', async () => {
-  // Call server API to create terminal session
-  const response = await fetch('http://localhost:3000/terminals', { method: 'POST' });
-  return response.json();
+  try {
+    // Call server API to create terminal session
+    const response = await fetch('http://localhost:3000/terminals', { method: 'POST' });
+    if (!response.ok) {
+      throw new Error(`Failed to create terminal: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error creating terminal:', error);
+    throw error;
+  }
 });
 
 ipcMain.handle('terminal:send', async (event, sessionId, data) => {
-  await fetch(`http://localhost:3000/terminals/${sessionId}/data`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: data,
-  });
+  try {
+    // Validate input parameters
+    if (!sessionId || typeof sessionId !== 'string') {
+      throw new Error('Invalid sessionId');
+    }
+    if (typeof data !== 'string') {
+      throw new Error('Invalid data type');
+    }
+    
+    const response = await fetch(`http://localhost:3000/terminals/${sessionId}/data`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: data,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to send data: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Error sending to terminal:', error);
+    throw error;
+  }
 });
