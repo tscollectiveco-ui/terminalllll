@@ -84,6 +84,9 @@
     </div>
 
     <script>
+        const pty = require('node-pty');
+        const os = require('os');
+        
         const terminal = document.getElementById('terminal');
         const commandInput = document.getElementById('command-input');
         const inputLine = document.getElementById('input-line');
@@ -91,6 +94,58 @@
         // Command history
         let commandHistory = [];
         let historyIndex = -1;
+
+        // Spawn a real shell
+        const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+        const ptyProcess = pty.spawn(shell, [], {
+            name: 'xterm-color',
+            cols: 80,
+            rows: 30,
+            cwd: os.homedir(),
+            env: process.env
+        });
+
+        // Function to emit output to terminal
+        function emit(text) {
+            if (text) {
+                const outputDiv = document.createElement('div');
+                outputDiv.className = 'output';
+                outputDiv.textContent = text;
+                terminal.insertBefore(outputDiv, inputLine);
+            }
+        }
+
+        // Main command dispatch function
+        function dispatchCommand(input, emit) {
+            // Handle clear command locally
+            if (input.trim().toLowerCase() === 'clear') {
+                clearTerminal();
+                return;
+            }
+
+            // Send command to real shell
+            ptyProcess.write(input + '\r');
+        }
+
+        // Listen for output from shell
+        ptyProcess.onData((data) => {
+            // Clean up shell prompts and control characters
+            const cleanData = data.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            const lines = cleanData.split('\n').filter(line => {
+                // Filter out empty lines and common shell prompts
+                const trimmed = line.trim();
+                return trimmed && !trimmed.match(/^[\$#>]\s*$/);
+            });
+            
+            lines.forEach(line => {
+                if (line.trim()) {
+                    emit(line);
+                }
+            });
+            
+            // Scroll to bottom
+            terminal.scrollTop = terminal.scrollHeight;
+        });
 
         // Focus on input when clicking anywhere in the terminal
         terminal.addEventListener('click', () => {
@@ -112,8 +167,8 @@
                     commandLine.innerHTML = `<span class="prompt">$ </span><span class="command">${escapeHtml(command)}</span>`;
                     terminal.insertBefore(commandLine, inputLine);
 
-                    // Execute the command
-                    executeCommand(command);
+                    // Execute the command via dispatchCommand
+                    dispatchCommand(command, emit);
 
                     // Clear input
                     commandInput.value = '';
@@ -140,58 +195,6 @@
                 }
             }
         });
-
-        // Execute commands
-        function executeCommand(command) {
-            const args = command.split(' ');
-            const cmd = args[0].toLowerCase();
-
-            let output = '';
-
-            switch (cmd) {
-                case 'help':
-                    output = `
-Available commands:
-  help     - Show this help message
-  clear    - Clear the terminal
-  echo     - Echo text to the terminal
-  date     - Show current date and time
-  whoami   - Show current user
-  pwd      - Show current working directory
-  exit     - Close the application
-                    `.trim();
-                    break;
-                case 'clear':
-                    clearTerminal();
-                    return;
-                case 'echo':
-                    output = args.slice(1).join(' ');
-                    break;
-                case 'date':
-                    output = new Date().toString();
-                    break;
-                case 'whoami':
-                    output = 'user';
-                    break;
-                case 'pwd':
-                    output = '/';
-                    break;
-                case 'exit':
-                    output = 'To close the application, use the window controls or Alt+F4 / Cmd+Q';
-                    break;
-                default:
-                    output = `Command not found: ${cmd}. Type 'help' for available commands.`;
-                    break;
-            }
-
-            // Display output
-            if (output) {
-                const outputDiv = document.createElement('div');
-                outputDiv.className = 'output';
-                outputDiv.textContent = output;
-                terminal.insertBefore(outputDiv, inputLine);
-            }
-        }
 
         // Clear terminal
         function clearTerminal() {
